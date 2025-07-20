@@ -1,0 +1,27 @@
+name: Create Translation Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers only on version tags like v1.0, v1.1, etc.
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Zip demo and full folders
+        run: |
+          zip -r translation_files.zip demo full
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
+          files: translation_files.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
